@@ -1,15 +1,18 @@
 
-当前ubuntu下的字典:
+当前ubuntu下的字典
+==================
 
 :stardict: 
    StarDict hasn't seen any active development for many years
    推荐 GoldenDict
 :GoldenDict: 
-   确实不错, 但是占CPU.
+   确实不错, 但是占CPU. 常年占20%
 :youdao:
     网页版而且有广告.
+    chrome 插件不错. 
 
 特点: 
+=====
 
 1. 自动取词
 2. 发音.
