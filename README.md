@@ -1,0 +1,2 @@
+youdao-dict-for-ubuntu
+======================
