@@ -11,6 +11,8 @@
     网页版而且有广告.
     chrome 插件不错. 
 
+stardict, GoldenDict 的一个共同问题是, 查询结果的字体都是一样大小. 很不好看.
+
 特点: 
 =====
 
@@ -43,4 +45,5 @@ install
 - 此外还有emacs 插件, vim 插件, 命令行版.
 
 
+@idning
 
