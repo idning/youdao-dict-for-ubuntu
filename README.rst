@@ -24,6 +24,10 @@ stardict, GoldenDict 的一个共同问题是, 查询结果的字体都是一样
 .. image:: https://raw.github.com/idning/youdao-dict-for-ubuntu/master/imgs/youdao-dict-for-ubuntu-0.png
     :height: 355px
 
+实现
+====
+
+获取当前选中的单词, 可以使用 ``xclip -o``, 我这里用的是 监听 ``selection_received`` 消息
 
 install
 =======
@@ -44,6 +48,4 @@ install
 
 - 此外还有emacs 插件, vim 插件, 命令行版.
 
-
 @idning
-
