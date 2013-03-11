@@ -12,6 +12,7 @@ import gtk
 import gobject
 
 import re
+import time
 import youdao_client
 
 
@@ -28,6 +29,8 @@ class Dict:
             x, y = self.window.get_position()
             px, py, mods = self.window.get_screen().get_root_window().get_pointer()
             if (px-x)*(px-x) + (py-y)*(py-y) > 400:  # distance > 20 in x, 20 in y
+                self.window.hide();
+            if(time.time() - self.popuptime > 3):   # popup for some seconds
                 self.window.hide();
 
         return True
@@ -82,9 +85,10 @@ class Dict:
         <p> %s </p>
 
         ''' % (translation, phonetic, explains, web)
-             
+                   
         self.view.load_html_string(html, '')
         self.view.reload()
+        self.popuptime = time.time()
 
     def __init__(self):
         self.window = gtk.Window(gtk.WINDOW_POPUP)
