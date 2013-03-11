@@ -48,4 +48,8 @@ install
 
 - 此外还有emacs 插件, vim 插件, 命令行版.
 
-@idning
+
+`@idning`_
+
+.. _`@idning`: http://weibo.com/idning
+
