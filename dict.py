@@ -25,12 +25,14 @@ class Dict:
 
         #if pop_up_show && distance (xxx): 
             #hide;
-        if self.window.get_property('visible'): 
+        if self.window.get_property('visible') and not self.mouse_in: 
             x, y = self.window.get_position()
             px, py, mods = self.window.get_screen().get_root_window().get_pointer()
             if (px-x)*(px-x) + (py-y)*(py-y) > 400:  # distance > 20 in x, 20 in y
+                print 'distance big enough, hide window '
                 self.window.hide();
             if(time.time() - self.popuptime > 3):   # popup for some seconds
+                print 'time long enough, hide window '
                 self.window.hide();
 
         return True
@@ -70,6 +72,7 @@ class Dict:
         youdao_client.pronounce(word)
         x, y, mods = self.window.get_screen().get_root_window().get_pointer()
         self.window.move(x+15, y+10)
+
         self.window.present()
 
         translation = '<br/>'.join(js['translation']) 
@@ -81,19 +84,26 @@ class Dict:
         #web = '<br/>'.join( ['<a href="http://dict.youdao.com/search?le=eng&q=%s">%s</a>: %s'%(i['key'], i['key'], ' '.join(i['value'])) for i in js['web'][:3] ] )
         web = '<br/>'.join( ['<a href="">%s</a>: %s'%(i['key'], ' '.join(i['value'])) for i in js['web'][:3] ] )
         html = '''
-        <h2> %s  <span style="color: #A0A0A0; font-size: 15px">[ %s ] </span> </h2>
+        <h2> 
+        %s  
+        <span style="color: #A0A0A0; font-size: 15px">[ %s ] </span> 
+        <span style="color: #0B6121; font-size: 12px">< %s > </span> 
+        </h2>
+        
         <b>基本翻译:</b>
         <p> %s </p>
         <b>网络释意:</b>
         <p> %s </p>
 
-        ''' % (translation, phonetic, explains, web)
+        ''' % (translation, phonetic, word, explains, web)
                    
         self.view.load_html_string(html, '')
         self.view.reload()
         self.popuptime = time.time()
 
     def __init__(self):
+        self.mouse_in = False
+
         self.window = gtk.Window(gtk.WINDOW_POPUP)
         self.window.set_title("youdao-dict-for-ubuntu")
         self.window.set_border_width(3)
@@ -124,9 +134,11 @@ class Dict:
 
     def _on_mouse_enter(self, wid, event):
         print '_on_mouse_enter'
+        self.mouse_in = True
 
     def _on_mouse_leave(self, *args):
         print '_on_mouse_leave'
+        self.mouse_in = False
         self.window.hide()
 
 def main():
