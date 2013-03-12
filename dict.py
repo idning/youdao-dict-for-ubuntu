@@ -39,17 +39,20 @@ class Dict:
         global g_last_selection
         if str(selection_data.type) == "STRING":
             text = selection_data.get_text()
+            text = text.decode('raw-unicode-escape')
             if(len(text) > 20):
                 return False
 
             if (not text) or (text == g_last_selection): 
                 return False
             
-            print "Selected String: %s" % selection_data.get_text()
+            print "Selected String: %s" % text
+            
+            print `text`
             g_last_selection = text
 
             #word = text.strip().split() [0]
-            m = re.search(r'[a-zA-Z-]+', text) # the selection mostly be: "widget,", "&window" ... 
+            m = re.search(r'[a-zA-Z-]+', text.encode('utf8')) # the selection mostly be: "widget,", "&window" ... 
             if m :
                 word = m.group(0)
                 print "Query Word: %s" % word
