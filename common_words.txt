@@ -99,3 +99,13 @@ day
 most
 us
 hello
+
+int
+float
+double
+struct
+def
+dict
+function
+main
+home

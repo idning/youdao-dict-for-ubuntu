@@ -99,19 +99,44 @@ class Dict:
         explains = '<br/>'.join(js['basic']['explains']) 
         #web = '<br/>'.join( ['<a href="http://dict.youdao.com/search?le=eng&q=%s">%s</a>: %s'%(i['key'], i['key'], ' '.join(i['value'])) for i in js['web'][:3] ] )
         web = '<br/>'.join( ['<a href="">%s</a>: %s'%(i['key'], ' '.join(i['value'])) for i in js['web'][:3] ] )
-        html = '''
-        <h2> 
-        %s  
-        <span style="color: #A0A0A0; font-size: 15px">[ %s ] </span> 
-        <span style="color: #0B6121; font-size: 12px">< %s > </span> 
-        </h2>
-        
-        <b>基本翻译:</b>
-        <p> %s </p>
-        <b>网络释意:</b>
-        <p> %s </p>
+        js = '''
+function addword(){
+    document.title = 'abc';
+    alert('xx');
+}
 
-        ''' % (translation, phonetic, word, explains, web)
+'''
+        self.view.execute_script(js);
+        html = '''
+<style>
+.add_to_wordbook {
+    background: url(http://bs.baidu.com/yanglin/add.png) no-repeat;
+    vertical-align: middle;
+    overflow: hidden;
+    display: inline-block;
+    vertical-align: top;
+    width: 24px;
+    padding-top: 26px;
+    height: 0;
+    margin-left: .5em;
+}
+</style>
+
+        <h2> 
+        %(translation)s  
+        <span style="color: #0B6121; font-size: 12px">< %(phonetic)s > </span> 
+        <a href="javascript:void(0);" id="wordbook" class="add_to_wordbook" title="点击在浏览器中打开" onclick="document.title='%(word)s'"></a> <br/>
+        </h2>
+
+        <span style="color: #A0A0A0; font-size: 15px">[ %(word)s ] </span> 
+        <b>基本翻译:</b>
+        <p> %(explains)s </p>
+
+        <span style="color: #A0A0A0; font-size: 15px">[ %(word)s ] </span> 
+        <b>网络释意:</b>
+        <p> %(web)s </p>
+
+        ''' % locals()
                    
         self.view.load_html_string(html, '')
         self.view.reload()
@@ -142,7 +167,19 @@ class Dict:
         self.view = webkit.WebView()
         html = "<h1>Hello!</h1>"
         self.view.load_html_string(html, '')
+
+        def title_changed(widget, frame, title):
+            print 'title_changed to ', title
+
+            import webbrowser
+            webbrowser.open('http://dict.youdao.com/search?le=eng&q=' + title )
+
+
+
+        self.view.connect('title-changed', title_changed)
+
         self.view.show()
+
         eventbox.add(self.view)
 
         vbox.pack_start(eventbox)
