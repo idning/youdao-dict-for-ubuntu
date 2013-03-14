@@ -6,17 +6,21 @@
 timer
 '''
 
+import os
+import re
+import time
+
 import pygtk
 pygtk.require('2.0')
 import gtk
 import gobject
 
-import re
-import time
 import youdao_client
 
-
 g_last_selection = ''
+
+PWD = os.path.dirname(os.path.realpath(__file__))
+WHITELIST = set( [s.strip() for s in file(PWD + '/common_words.txt').readlines()])
 
 class Dict:
     def _on_timer(self, widget):
@@ -55,13 +59,25 @@ class Dict:
 
             #word = text.strip().split() [0]
             m = re.search(r'[a-zA-Z-]+', text.encode('utf8')) # the selection mostly be: "widget,", "&window" ... 
-            if m :
-                word = m.group(0)
-                print "Query Word: %s" % word
-                self.query_word(word)
-            else:
+            if not m: 
                 print "Query nothing"
+                return False
 
+            word = m.group(0).lower()
+            if self.ignore(word):
+                print 'Ignore Word: ', word
+                return False
+
+            print "Query Word: ",  word
+            self.query_word(word)
+
+        return False
+
+    def ignore(self, word):
+        if len(word)<=3:
+            return True
+        if word in WHITELIST: 
+            return True
         return False
 
     def query_word(self, word):
