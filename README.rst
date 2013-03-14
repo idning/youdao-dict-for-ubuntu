@@ -21,7 +21,7 @@ stardict, GoldenDict 的一个共同问题是, 查询结果的字体都是一样
 3. 基于web版youdao , 而不是API(http://fanyi.youdao.com/openapi.do?keyfrom=tinxing&key=1312427901&type=data&doctype=json&version=1.1&q=hello)
    因为API 通常有鉴权而比较慢.
 
-.. image:: https://raw.github.com/idning/youdao-dict-for-ubuntu/master/imgs/youdao-dict-for-ubuntu-0.png
+.. image:: https://raw.github.com/idning/youdao-dict-for-ubuntu/master/imgs/youdao-dict.png
     :height: 355px
 
 实现
