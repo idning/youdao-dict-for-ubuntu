@@ -9,6 +9,7 @@ timer
 import os
 import re
 import time
+import fcntl 
 
 import pygtk
 pygtk.require('2.0')
@@ -195,10 +196,20 @@ function addword(){
         self.window.hide()
 
 def main():
+
     gtk.main()
     return 0
 
 if __name__ == "__main__":
+
+    LOCK_F = PWD +  '/.lock'
+    f=open(LOCK_F, 'w') 
+    try:
+        fcntl.flock(f.fileno(), fcntl.LOCK_EX|fcntl.LOCK_NB) 
+    except:
+        print 'a process is already running!!!'
+        exit(0)
+
     Dict()
     main()
 
