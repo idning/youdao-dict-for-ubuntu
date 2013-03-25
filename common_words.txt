@@ -109,3 +109,6 @@ dict
 function
 main
 home
+
+proxy
+output

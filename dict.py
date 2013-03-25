@@ -15,6 +15,7 @@ import pygtk
 pygtk.require('2.0')
 import gtk
 import gobject
+import logging
 
 import youdao_client
 
@@ -22,6 +23,11 @@ g_last_selection = ''
 
 PWD = os.path.dirname(os.path.realpath(__file__))
 WHITELIST = set( [s.strip() for s in file(PWD + '/common_words.txt').readlines()])
+
+if not os.path.exists(PWD + '/log/'):
+    os.mkdir(PWD + '/log/')
+log_path = PWD + '/log/dict.log'
+logging.basicConfig(filename=log_path, level=logging.DEBUG)
 
 class Dict:
     def _on_timer(self, widget):
@@ -70,6 +76,7 @@ class Dict:
                 return False
 
             print "Query Word: ",  word
+            logging.info('Query Word: ' + word)
             self.query_word(word)
 
         return False
