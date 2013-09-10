@@ -59,24 +59,23 @@ class Dict:
             if (not text) or (text == g_last_selection): 
                 return False
             
-            print "Selected String: %s" % text
-            
-            print `text`
+            logging.info("======== Selected String : %s" % text)
+            #print `text`
             g_last_selection = text
 
             #word = text.strip().split() [0]
             m = re.search(r'[a-zA-Z-]+', text.encode('utf8')) # the selection mostly be: "widget,", "&window" ... 
             if not m: 
-                print "Query nothing"
+                logging.info("Query nothing")
                 return False
 
             word = m.group(0).lower()
             if self.ignore(word):
-                print 'Ignore Word: ', word
+                logging.info('Ignore Word: ' + word)
                 return False
 
-            print "Query Word: ",  word
-            logging.info('Query Word: ' + word)
+            #print "QueryWord: ",  word
+            logging.info('QueryWord: ' + word)
             self.query_word(word)
 
         return False
@@ -91,7 +90,9 @@ class Dict:
     def query_word(self, word):
         js = youdao_client.query(word)
         if 'basic' not in js:
+            logging.info('IgnoreWord: ' + word)
             return 
+        logging.info('PronounceWord: ' + word)
 
         youdao_client.pronounce(word)
         x, y, mods = self.window.get_screen().get_root_window().get_pointer()
