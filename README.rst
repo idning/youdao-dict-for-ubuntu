@@ -1,23 +1,12 @@
+有道词典的Linux客户端. 视频演示:
 
-用过的ubuntu下的字典
-====================
+- http://v.youku.com/v_show/id_XNTI2ODQ1MjY4.html
+- http://v.youku.com/v_show/id_XNTI2ODYyMzUy.html
 
-:stardict: 
-   StarDict hasn't seen any active development for many years
-   推荐 GoldenDict
-:GoldenDict: 
-   确实不错, 但是占CPU. 常年占20%
-:youdao:
-    网页版而且有广告.
-    chrome 插件不错. 
+截图:
 
-stardict, GoldenDict 的一个共同问题是, 查询结果的 **字体都是一样大小** . 很不好看.
-
-youdao-dict-for-ubuntu 演示
-===========================
-
-http://v.youku.com/v_show/id_XNTI2ODQ1MjY4.html
-http://v.youku.com/v_show/id_XNTI2ODYyMzUy.html
+.. image:: https://raw.github.com/idning/youdao-dict-for-ubuntu/master/imgs/youdao-dict.png
+    :height: 355px
 
 特点
 ====
@@ -30,8 +19,10 @@ http://v.youku.com/v_show/id_XNTI2ODYyMzUy.html
 5. 基于web版youdao , 而不是API(http://fanyi.youdao.com/openapi.do?keyfrom=tinxing&key=1312427901&type=data&doctype=json&version=1.1&q=hello)
    因为API 通常有鉴权而比较慢.
 
-.. image:: https://raw.github.com/idning/youdao-dict-for-ubuntu/master/imgs/youdao-dict.png
-    :height: 355px
+6. 界面简洁, 用最大字体显示默认翻译, 屏幕占用面积小, 真正做到无缝阅读体验.
+7. 代码简洁清晰, 总共250行, 如果不爽，自己改吧改吧~
+
+
 
 
 install
@@ -56,6 +47,8 @@ install
     Type=Application
     OnlyShowIn=GNOME;
 
+请自行修改路径~
+
 实现原理 
 ========
 
@@ -64,14 +57,26 @@ install
 其它词典
 ========
 
-- 一个QT版的: https://github.com/lvzongting/youdao-qt
-- openyoudao: 比较复杂, python 实现(不错, 不过讨厌网页广告.): 
+:stardict: 
+   StarDict hasn't seen any active development for many years
+   推荐 GoldenDict
+:GoldenDict: 
+   确实不错, 但是占CPU. 常年占20%
+:youdao:
+    网页版而且有广告.
+    chrome 插件不错. 
 
+stardict, GoldenDict 的一个共同问题是, 查询结果的 **字体都是一样大小** . 很不好看.
+
+:一个QT版的: 
+     https://github.com/lvzongting/youdao-qt
+
+:openyoudao: 
+     界面比较复杂, python 实现(不错, 不过讨厌留在网页上的广告.): 
     - https://github.com/justzx2011/openyoudao
     - http://v.youku.com/v_show/id_XNDAzMDUxNDk2.html
 
-- 此外还有emacs 插件, vim 插件, 命令行版.
-
+此外还有emacs 插件, vim 插件, 命令行版.
 
 `@idning`_
 
