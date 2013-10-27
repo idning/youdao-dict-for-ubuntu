@@ -27,13 +27,13 @@ def system(cmd, log=True):
 def query(word):
     url = 'http://fanyi.youdao.com/openapi.do?keyfrom=tinxing&key=1312427901&type=data&doctype=json&version=1.1&q=' + word
     data = urllib2.urlopen(url).read()
-    print data
+    #print data
     return json_decode(data)
 
 #this is much simper, 3ks mplayer
 def pronounce(word):
     url = 'http://dict.youdao.com/dictvoice?audio=%s' % word
-    cmd = 'nohup mplayer "%s" ' % (url,)
+    cmd = 'nohup mplayer "%s" >/dev/null 2>&1 ' % (url,)
     system(cmd)
 
 def main():

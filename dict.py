@@ -2,27 +2,24 @@
 #coding: utf-8
 #author : ning
 #date   : 2013-03-08 21:16:14
-'''
-timer
-'''
 
 import os
 import re
 import time
 import fcntl 
+import logging
 
 import pygtk
 pygtk.require('2.0')
 import gtk
 import gobject
-import logging
+import webkit
 
 import youdao_client
 
-g_last_selection = ''
-
 PWD = os.path.dirname(os.path.realpath(__file__))
 WHITELIST = set( [s.strip() for s in file(PWD + '/common_words.txt').readlines()])
+LOGO = PWD + '/icon.png'
 
 if not os.path.exists(PWD + '/log/'):
     os.mkdir(PWD + '/log/')
@@ -30,9 +27,56 @@ log_path = PWD + '/log/dict.log'
 logging.basicConfig(filename=log_path, level=logging.DEBUG)
 
 class Dict:
+    def __init__(self):
+        self.mouse_in = False
+        self.popuptime = 0
+        self.last_selection = ''
+
+        self.window = None
+        self.view = None
+
+        self.init_widgets()
+
+    def init_widgets(self):
+        '''
+        window->vbox->eventbox->view
+        '''
+        self.window = gtk.Window(gtk.WINDOW_POPUP)
+        self.window.set_title("youdao-dict-for-ubuntu")
+        self.window.set_border_width(3)
+        self.window.connect("destroy", lambda w: gtk.main_quit())
+        self.window.resize(360, 200)
+
+        vbox = gtk.VBox(False, 0)
+        vbox.show()
+
+        eventbox = gtk.EventBox()
+        eventbox.connect("selection_received", self._on_selection_received)
+        eventbox.connect('enter-notify-event', self._on_mouse_enter)
+        eventbox.connect('leave-notify-event', self._on_mouse_leave)
+        gobject.timeout_add(500, self._on_timer, eventbox)
+        eventbox.show()
+
+        self.view = webkit.WebView()
+        def title_changed(widget, frame, title):
+            logging.debug('title_changed to %s, will open webbrowser ' % title)
+            import webbrowser
+            webbrowser.open('http://dict.youdao.com/search?le=eng&q=' + title )
+        self.view.connect('title-changed', title_changed)
+        self.view.show()
+
+        #add one by one 
+        self.window.add(vbox)
+        vbox.pack_start(eventbox) # means add
+        eventbox.add(self.view)
+
     def _on_timer(self, widget):
-        print 'on_timer'
-        ret = widget.selection_convert("PRIMARY", "STRING")
+        '''
+        1. Requests the contents of a selection. (will trigger `selection_received`)
+        2. hide window if necessary
+        '''
+
+        widget.selection_convert("PRIMARY", "STRING")
 
         #if pop_up_show && distance (xxx): 
             #hide;
@@ -40,30 +84,29 @@ class Dict:
             x, y = self.window.get_position()
             px, py, mods = self.window.get_screen().get_root_window().get_pointer()
             if (px-x)*(px-x) + (py-y)*(py-y) > 400:  # distance > 20 in x, 20 in y
-                print 'distance big enough, hide window '
+                logging.debug('distance big enough, hide window')
                 self.window.hide();
             if(time.time() - self.popuptime > 3):   # popup for some seconds
-                print 'time long enough, hide window '
+                logging.debug('time long enough, hide window')
                 self.window.hide();
 
         return True
 
     def _on_selection_received(self, widget, selection_data, data):
-        global g_last_selection
         if str(selection_data.type) == "STRING":
             text = selection_data.get_text()
+            if not text:
+                return False
             text = text.decode('raw-unicode-escape')
             if(len(text) > 20):
                 return False
 
-            if (not text) or (text == g_last_selection): 
+            if (not text) or (text == self.last_selection): 
                 return False
             
             logging.info("======== Selected String : %s" % text)
-            #print `text`
-            g_last_selection = text
+            self.last_selection = text
 
-            #word = text.strip().split() [0]
             m = re.search(r'[a-zA-Z-]+', text.encode('utf8')) # the selection mostly be: "widget,", "&window" ... 
             if not m: 
                 logging.info("Query nothing")
@@ -74,17 +117,9 @@ class Dict:
                 logging.info('Ignore Word: ' + word)
                 return False
 
-            #print "QueryWord: ",  word
             logging.info('QueryWord: ' + word)
             self.query_word(word)
 
-        return False
-
-    def ignore(self, word):
-        if len(word)<=3:
-            return True
-        if word in WHITELIST: 
-            return True
         return False
 
     def query_word(self, word):
@@ -108,14 +143,6 @@ class Dict:
         explains = '<br/>'.join(js['basic']['explains']) 
         #web = '<br/>'.join( ['<a href="http://dict.youdao.com/search?le=eng&q=%s">%s</a>: %s'%(i['key'], i['key'], ' '.join(i['value'])) for i in js['web'][:3] ] )
         web = '<br/>'.join( ['<a href="">%s</a>: %s'%(i['key'], ' '.join(i['value'])) for i in js['web'][:3] ] )
-        js = '''
-function addword(){
-    document.title = 'abc';
-    alert('xx');
-}
-
-'''
-        self.view.execute_script(js);
         html = '''
 <style>
 .add_to_wordbook {
@@ -151,65 +178,66 @@ function addword(){
         self.view.reload()
         self.popuptime = time.time()
 
-    def __init__(self):
-        self.mouse_in = False
-
-        self.window = gtk.Window(gtk.WINDOW_POPUP)
-        self.window.set_title("youdao-dict-for-ubuntu")
-        self.window.set_border_width(3)
-        self.window.connect("destroy", lambda w: gtk.main_quit())
-        self.window.resize(360, 200)
-
-        vbox = gtk.VBox(False, 0)
-        self.window.add(vbox)
-        vbox.show()
-
-        eventbox = gtk.EventBox()
-
-        eventbox.connect("selection_received", self._on_selection_received)
-        eventbox.connect('enter-notify-event', self._on_mouse_enter)
-        eventbox.connect('leave-notify-event', self._on_mouse_leave)
-
-        gobject.timeout_add(500, self._on_timer, eventbox)
-
-        import webkit
-        self.view = webkit.WebView()
-        html = "<h1>Hello!</h1>"
-        self.view.load_html_string(html, '')
-
-        def title_changed(widget, frame, title):
-            print 'title_changed to ', title
-
-            import webbrowser
-            webbrowser.open('http://dict.youdao.com/search?le=eng&q=' + title )
-
-
-
-        self.view.connect('title-changed', title_changed)
-
-        self.view.show()
-
-        eventbox.add(self.view)
-
-        vbox.pack_start(eventbox)
-        eventbox.show()
+    def ignore(self, word):
+        if len(word)<=3:
+            return True
+        if word in WHITELIST: 
+            return True
+        return False
 
     def _on_mouse_enter(self, wid, event):
-        print '_on_mouse_enter'
+        logging.debug('_on_mouse_enter')
         self.mouse_in = True
 
     def _on_mouse_leave(self, *args):
-        print '_on_mouse_leave'
+        logging.debug('_on_mouse_leave')
         self.mouse_in = False
         self.window.hide()
 
-def main():
+class DictStatusIcon:
+    def __init__(self):
+        self.statusicon = gtk.StatusIcon()
+        self.statusicon.set_from_file(LOGO) 
+        self.statusicon.connect("popup-menu", self.right_click_event)
+        self.statusicon.set_tooltip("StatusIcon Example")
+        
+        # 这里可以放一个配置界面
+        #window = gtk.Window()
+        #window.connect("destroy", lambda w: gtk.main_quit())
+        #window.show_all()
+        
+    def right_click_event(self, icon, button, time):
+        menu = gtk.Menu()
 
+        itemlist = [(u'About', self.show_about_dialog),
+                    (u'Quit', gtk.main_quit)]
+
+        for text, callback in itemlist:
+            item = gtk.MenuItem(text)
+            item.connect('activate', callback)
+            item.show()
+            menu.append(item)
+
+        menu.show_all()
+        menu.popup(None, None, gtk.status_icon_position_menu, button, time, self.statusicon)
+        
+    def show_about_dialog(self, widget):
+        about_dialog = gtk.AboutDialog()
+
+        about_dialog.set_destroy_with_parent(True)
+        about_dialog.set_name("youdao-dict-for-ubuntu")
+        about_dialog.set_version("0.0.2")
+        about_dialog.set_authors(["idning"])
+                
+        about_dialog.run()
+        about_dialog.destroy()
+
+def main():
+    DictStatusIcon()
+    Dict()
     gtk.main()
-    return 0
 
 if __name__ == "__main__":
-
     LOCK_F = PWD +  '/.lock'
     f=open(LOCK_F, 'w') 
     try:
@@ -218,6 +246,5 @@ if __name__ == "__main__":
         print 'a process is already running!!!'
         exit(0)
 
-    Dict()
     main()
 

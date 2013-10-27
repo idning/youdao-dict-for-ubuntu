@@ -1,4 +1,10 @@
-0.0.1:
+0.0.2: @2013-10-27
+	* 采取了xinleibird 同学提出的, 去掉mplayer 时的 nohup.out
+	* 去掉stdout, 只使用logging
+	* 增加Status Icon
+	* 调整代码
+
+0.0.1: @2013-xx-xx
 	* 发声
 	* 鼠标跟随
 	* 用chrome打开单词.
