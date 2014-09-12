@@ -22,22 +22,19 @@
 6. 界面简洁, 用最大字体显示默认翻译, 屏幕占用面积小, 真正做到无缝阅读体验.
 7. 代码简洁清晰, 总共250行, 如果不爽，自己改吧改吧~
 
-
-
-
 install
 =======
 
 0. 发声需要mplayer
 1. pip install pygtk
-2. TODO
+2. we need a package
 
 开机启动
 --------
 
 在/etc/xdg/autostart下, 增加一个.desktop文件::
 
-    root@ning-laptop:/etc/xdg/autostart# cat youdao-dict-for-ubuntu.desktop 
+    root@ning-laptop:/etc/xdg/autostart# cat youdao-dict-for-ubuntu.desktop
     [Desktop Entry]
     Name=youdao-dict-for-ubuntu
     Comment=youdao-dict-for-ubuntu
@@ -49,7 +46,7 @@ install
 
 请自行修改路径~
 
-实现原理 
+实现原理
 ========
 
 获取当前选中的单词, 可以使用 ``xclip -o``, 我这里用的是 监听 ``selection_received`` 消息
@@ -57,22 +54,22 @@ install
 其它词典
 ========
 
-:stardict: 
+:stardict:
    StarDict hasn't seen any active development for many years
    推荐 GoldenDict
-:GoldenDict: 
+:GoldenDict:
    确实不错, 但是占CPU. 常年占20%
 :youdao:
     网页版而且有广告.
-    chrome 插件不错. 
+    chrome 插件不错.
 
 stardict, GoldenDict 的一个共同问题是, 查询结果的 **字体都是一样大小** . 很不好看.
 
-:一个QT版的: 
+:一个QT版的:
      https://github.com/lvzongting/youdao-qt
 
-:openyoudao: 
-     界面比较复杂, python 实现(不错, 不过讨厌留在网页上的广告.): 
+:openyoudao:
+     界面比较复杂, python 实现(不错, 不过讨厌留在网页上的广告.):
     - https://github.com/justzx2011/openyoudao
     - http://v.youku.com/v_show/id_XNDAzMDUxNDk2.html
 
