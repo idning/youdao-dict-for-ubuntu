@@ -15,7 +15,7 @@ import gtk
 import gobject
 import webkit
 
-from youdao_dict import youdao_client
+import youdao_client
 
 VERSION = "0.1.0"
 PWD = os.path.dirname(os.path.realpath(__file__))
