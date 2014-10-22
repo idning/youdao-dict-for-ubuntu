@@ -25,27 +25,51 @@
 install
 =======
 
+安装deb包
+---------
+
+::
+
+    wget http://idning.github.io/imgs/res/youdao-dict-0.1.0_all.deb
+    sudo dpkg -i youdao-dict-0.1.0_all.deb
+
+手动安装
+--------
+
 ::
 
     apt-get install mplayer python-gtk2 python-webkit
     pip install -e git://github.com/idning/youdao-dict-for-ubuntu.git#egg=youdao-dict
+    运行:
+    dict.py
 
-开机启动
---------
+    开机自动启动: 在/etc/xdg/autostart下, 增加一个.desktop文件::
 
-在/etc/xdg/autostart下, 增加一个.desktop文件::
+        root@ning-laptop:/etc/xdg/autostart# cat youdao-dict-for-ubuntu.desktop
+        [Desktop Entry]
+        Name=youdao-dict-for-ubuntu
+        Comment=youdao-dict-for-ubuntu
+        Exec=dict.py
+        Terminal=false
+        Type=Application
+        OnlyShowIn=GNOME;
 
-    root@ning-laptop:/etc/xdg/autostart# cat youdao-dict-for-ubuntu.desktop
-    [Desktop Entry]
-    Name=youdao-dict-for-ubuntu
-    Comment=youdao-dict-for-ubuntu
-    Icon=/home/ning/idning-github/youdao-dict-for-ubuntu/icon.png
-    Exec=/home/ning/idning-github/youdao-dict-for-ubuntu/dict.py
-    Terminal=false
-    Type=Application
-    OnlyShowIn=GNOME;
+    请自行修改路径~
 
-请自行修改路径~
+配置
+----
+
+单词白名单: ~/.youdao-dict/common_words.txt, 例子:
+
+https://github.com/idning/youdao-dict-for-ubuntu/blob/master/common_words.txt
+
+日志
+----
+
+~/.youdao-dict/dict.log
+
+可以从日志中抽取常用词加入到白名单去
+
 
 实现原理
 ========

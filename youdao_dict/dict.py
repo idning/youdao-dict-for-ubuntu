@@ -17,10 +17,11 @@ import webkit
 
 from youdao_dict import youdao_client
 
+VERSION = "0.1.0"
 PWD = os.path.dirname(os.path.realpath(__file__))
 LOGO = PWD + '/icon.png'
 
-HOME = os.getenv("HOME") + '/.youdao/'
+HOME = os.getenv("HOME") + '/.youdao-dict/'
 COMMONWORDS_PATH = HOME + '/common_words.txt'
 LOG_PATH = HOME + '/dict.log'
 LOCK_PATH = HOME +  '/.lock'
@@ -234,7 +235,7 @@ class DictStatusIcon:
 
         about_dialog.set_destroy_with_parent(True)
         about_dialog.set_name("youdao-dict-for-ubuntu")
-        about_dialog.set_version("0.0.2")
+        about_dialog.set_version(VERSION)
         about_dialog.set_authors(["idning"])
 
         about_dialog.run()
