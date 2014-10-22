@@ -33,8 +33,12 @@ install
     wget http://idning.github.io/imgs/res/youdao-dict-0.1.0_all.deb
     sudo dpkg -i youdao-dict-0.1.0_all.deb
 
-手动安装
---------
+直接运行 ``youdao-dict`` 即可.
+
+启动图标会安装在office分组下, 可以参考这里增加自动启动项:  http://jingyan.baidu.com/article/7c6fb428632c3980642c90ce.html
+
+手动安装(适合于需要hack的同学)
+------------------------------
 
 ::
 
