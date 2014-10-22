@@ -25,9 +25,10 @@
 install
 =======
 
-0. 发声需要mplayer
-1. pip install pygtk
-2. we need a package
+::
+
+    apt-get install mplayer python-gtk2 python-webkit
+    pip install -e git://github.com/idning/youdao-dict-for-ubuntu.git#egg=youdao-dict
 
 开机启动
 --------

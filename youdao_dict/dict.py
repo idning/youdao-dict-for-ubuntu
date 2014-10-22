@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 #coding: utf-8
 #author : ning
 #date   : 2013-03-08 21:16:14
@@ -6,7 +6,7 @@
 import os
 import re
 import time
-import fcntl 
+import fcntl
 import logging
 
 import pygtk
@@ -15,16 +15,24 @@ import gtk
 import gobject
 import webkit
 
-import youdao_client
+from youdao_dict import youdao_client
 
 PWD = os.path.dirname(os.path.realpath(__file__))
-WHITELIST = set( [s.strip() for s in file(PWD + '/common_words.txt').readlines()])
 LOGO = PWD + '/icon.png'
 
-if not os.path.exists(PWD + '/log/'):
-    os.mkdir(PWD + '/log/')
-log_path = PWD + '/log/dict.log'
-logging.basicConfig(filename=log_path, level=logging.DEBUG)
+HOME = os.getenv("HOME") + '/.youdao/'
+COMMONWORDS_PATH = HOME + '/common_words.txt'
+LOG_PATH = HOME + '/dict.log'
+LOCK_PATH = HOME +  '/.lock'
+
+if not os.path.exists(HOME):
+    os.mkdir(HOME)
+if not os.path.exists(COMMONWORDS_PATH):
+    file(COMMONWORDS_PATH, 'w').close()
+
+WHITELIST = set( [s.strip() for s in file(COMMONWORDS_PATH).readlines()])
+
+logging.basicConfig(filename=LOG_PATH, level=logging.DEBUG)
 
 class Dict:
     def __init__(self):
@@ -65,7 +73,7 @@ class Dict:
         self.view.connect('title-changed', title_changed)
         self.view.show()
 
-        #add one by one 
+        #add one by one
         self.window.add(vbox)
         vbox.pack_start(eventbox) # means add
         eventbox.add(self.view)
@@ -78,9 +86,9 @@ class Dict:
 
         widget.selection_convert("PRIMARY", "STRING")
 
-        #if pop_up_show && distance (xxx): 
+        #if pop_up_show && distance (xxx):
             #hide;
-        if self.window.get_property('visible') and not self.mouse_in: 
+        if self.window.get_property('visible') and not self.mouse_in:
             x, y = self.window.get_position()
             px, py, mods = self.window.get_screen().get_root_window().get_pointer()
             if (px-x)*(px-x) + (py-y)*(py-y) > 400:  # distance > 20 in x, 20 in y
@@ -101,14 +109,14 @@ class Dict:
             if(len(text) > 20):
                 return False
 
-            if (not text) or (text == self.last_selection): 
+            if (not text) or (text == self.last_selection):
                 return False
-            
+
             logging.info("======== Selected String : %s" % text)
             self.last_selection = text
 
-            m = re.search(r'[a-zA-Z-]+', text.encode('utf8')) # the selection mostly be: "widget,", "&window" ... 
-            if not m: 
+            m = re.search(r'[a-zA-Z-]+', text.encode('utf8')) # the selection mostly be: "widget,", "&window" ...
+            if not m:
                 logging.info("Query nothing")
                 return False
 
@@ -126,7 +134,7 @@ class Dict:
         js = youdao_client.query(word)
         if 'basic' not in js:
             logging.info('IgnoreWord: ' + word)
-            return 
+            return
         logging.info('PronounceWord: ' + word)
 
         youdao_client.pronounce(word)
@@ -135,12 +143,12 @@ class Dict:
 
         self.window.present()
 
-        translation = '<br/>'.join(js['translation']) 
+        translation = '<br/>'.join(js['translation'])
         if 'phonetic' in js['basic']:
             phonetic = js['basic']['phonetic']
         else:
             phonetic = ''
-        explains = '<br/>'.join(js['basic']['explains']) 
+        explains = '<br/>'.join(js['basic']['explains'])
         #web = '<br/>'.join( ['<a href="http://dict.youdao.com/search?le=eng&q=%s">%s</a>: %s'%(i['key'], i['key'], ' '.join(i['value'])) for i in js['web'][:3] ] )
         web = '<br/>'.join( ['<a href="">%s</a>: %s'%(i['key'], ' '.join(i['value'])) for i in js['web'][:3] ] )
         html = '''
@@ -158,22 +166,22 @@ class Dict:
 }
 </style>
 
-        <h2> 
-        %(translation)s  
-        <span style="color: #0B6121; font-size: 12px">< %(phonetic)s > </span> 
+        <h2>
+        %(translation)s
+        <span style="color: #0B6121; font-size: 12px">< %(phonetic)s > </span>
         <a href="javascript:void(0);" id="wordbook" class="add_to_wordbook" title="点击在浏览器中打开" onclick="document.title='%(word)s'"></a> <br/>
         </h2>
 
-        <span style="color: #A0A0A0; font-size: 15px">[ %(word)s ] </span> 
+        <span style="color: #A0A0A0; font-size: 15px">[ %(word)s ] </span>
         <b>基本翻译:</b>
         <p> %(explains)s </p>
 
-        <span style="color: #A0A0A0; font-size: 15px">[ %(word)s ] </span> 
+        <span style="color: #A0A0A0; font-size: 15px">[ %(word)s ] </span>
         <b>网络释意:</b>
         <p> %(web)s </p>
 
         ''' % locals()
-                   
+
         self.view.load_html_string(html, '')
         self.view.reload()
         self.popuptime = time.time()
@@ -181,7 +189,7 @@ class Dict:
     def ignore(self, word):
         if len(word)<=3:
             return True
-        if word in WHITELIST: 
+        if word in WHITELIST:
             return True
         return False
 
@@ -197,15 +205,15 @@ class Dict:
 class DictStatusIcon:
     def __init__(self):
         self.statusicon = gtk.StatusIcon()
-        self.statusicon.set_from_file(LOGO) 
+        self.statusicon.set_from_file(LOGO)
         self.statusicon.connect("popup-menu", self.right_click_event)
         self.statusicon.set_tooltip("StatusIcon Example")
-        
+
         # 这里可以放一个配置界面
         #window = gtk.Window()
         #window.connect("destroy", lambda w: gtk.main_quit())
         #window.show_all()
-        
+
     def right_click_event(self, icon, button, time):
         menu = gtk.Menu()
 
@@ -220,7 +228,7 @@ class DictStatusIcon:
 
         menu.show_all()
         menu.popup(None, None, gtk.status_icon_position_menu, button, time, self.statusicon)
-        
+
     def show_about_dialog(self, widget):
         about_dialog = gtk.AboutDialog()
 
@@ -228,7 +236,7 @@ class DictStatusIcon:
         about_dialog.set_name("youdao-dict-for-ubuntu")
         about_dialog.set_version("0.0.2")
         about_dialog.set_authors(["idning"])
-                
+
         about_dialog.run()
         about_dialog.destroy()
 
@@ -238,10 +246,9 @@ def main():
     gtk.main()
 
 if __name__ == "__main__":
-    LOCK_F = PWD +  '/.lock'
-    f=open(LOCK_F, 'w') 
+    f=open(LOCK_PATH, 'w')
     try:
-        fcntl.flock(f.fileno(), fcntl.LOCK_EX|fcntl.LOCK_NB) 
+        fcntl.flock(f.fileno(), fcntl.LOCK_EX|fcntl.LOCK_NB)
     except:
         print 'a process is already running!!!'
         exit(0)
