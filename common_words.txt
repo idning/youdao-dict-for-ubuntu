@@ -208,7 +208,6 @@ image
 path
 load
 canvas
-structure
 redis
 opencv
 conf
@@ -234,12 +233,10 @@ count
 touch
 timeout
 review
-pcsmongopcs
 mscaledetector
 matrix
 foreground
 default
-contactmember
 schema
 mongod
 method
@@ -299,6 +296,5 @@ list
 getmask
 find
 dump
-contacts
 code
 cname
