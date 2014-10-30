@@ -260,7 +260,6 @@ scrapy
 sata
 root
 rect
-pcsapi
 oplog
 ning
 call
